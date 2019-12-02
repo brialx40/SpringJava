@@ -5,48 +5,40 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.usbcali.bank.domain.Cliente;
 import co.edu.usbcali.bank.domain.TipoDocumento;
 
-
-class ClienteTest {
-
-	private final static Logger log = LoggerFactory.getLogger(ClienteTest.class);
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration("/applicationcontext.xml")
+class ClienteSpringTest {
 	
-	private final static Long clieId = 9090L;
-	
-	EntityManagerFactory entityManagerFactory;
+	@PersistenceContext
 	EntityManager entityManager;
 	
-	@BeforeEach
-	void beforeEach() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("bank-logic");		
-		entityManager = entityManagerFactory.createEntityManager();
-		log.info("@BeforeEach");
-	}
+	final static Logger log = LoggerFactory.getLogger(ClienteSpringTest.class);
 	
-	@AfterEach
-	void afterEach() {
-		entityManager.close();
-		entityManagerFactory.close();
-		log.info("@AfterEach");
-	}
+	final static Long clieId = 9790L;
 	
 	@Test
 	@DisplayName("save")
-	void aTest(){
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+	@Rollback(false)
+	void aTest() {
 		Cliente cliente = entityManager.find(Cliente.class, clieId);
-		assertNotNull(cliente,"El cliente existe");
+		assertNull(cliente,"El cliente no existe");
 		
 		cliente = new Cliente();
 		cliente.setClieId(clieId);
@@ -60,17 +52,17 @@ class ClienteTest {
 			assertNotNull(tipoDocumento);
 			cliente.setTipoDocumento(tipoDocumento);
 		
-		entityManager.getTransaction().begin();
 		entityManager.persist(cliente);
-		entityManager.getTransaction().commit();
+		
 		log.info("Se registró el cliente "+cliente.getNombre());
 	}
 	
 	@Test
 	@DisplayName("findById")
+	@Transactional(readOnly = true)
 	void bTest() {		
 		Cliente cliente = entityManager.find(Cliente.class, clieId);		
-		assertNull(cliente, "No existe cliente "+clieId);
+		assertNotNull(cliente, "No existe cliente "+clieId);
 		
 		log.info("Id: "+cliente.getClieId());
 		log.info("Nombre: "+cliente.getNombre());
@@ -82,41 +74,37 @@ class ClienteTest {
 	
 	@Test
 	@DisplayName("update")
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+	@Rollback(false)
 	void cTest() {
 		Cliente cliente = entityManager.find(Cliente.class, clieId);
 		assertNotNull(cliente,"El cliente existe");
 		
 		cliente.setActivo("N");
 				
-		entityManager.getTransaction().begin();
 		entityManager.merge(cliente);
-		entityManager.getTransaction().commit();
 		log.info("Se actualizó el cliente "+cliente.getClieId());
 	}
 	
 	@Test
 	@DisplayName("delete")
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+	@Rollback(false)
 	void dTest() {
 		Cliente cliente = entityManager.find(Cliente.class, clieId);
 		assertNotNull(cliente,"El cliente no existe");
 		
-		entityManager.getTransaction().begin();
 		entityManager.remove(cliente);
-		entityManager.getTransaction().commit();
 		log.info("Se eliminó el cliente "+cliente.getClieId());
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Test
 	@DisplayName("findAll")
+	@Transactional(readOnly = true)
 	void eTest() {
 		String jpql = "FROM Cliente";
 		List<Cliente> listaCliente = entityManager.createQuery(jpql).getResultList();
-		
-		/*for (Cliente cliente : listaCliente) {
-			log.info("Nombre "+cliente.getNombre());
-			log.info("Email "+cliente.getEmail());
-		}*/
 		
 		listaCliente.forEach(cliente->{
 			log.info("Nombre "+cliente.getNombre());
@@ -124,6 +112,5 @@ class ClienteTest {
 		});
 		
 	}
-	
 
 }
