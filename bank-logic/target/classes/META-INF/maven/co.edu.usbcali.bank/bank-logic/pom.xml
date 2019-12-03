@@ -7,13 +7,12 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<dependencies>
-	
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>5.2.1.RELEASE</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
@@ -24,9 +23,8 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>5.2.1.RELEASE</version>
-			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -34,12 +32,21 @@
 			<version>5.4.9.Final</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.2.8</version>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.1.0.Final</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.glassfish/javax.el -->
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>3.0.1-b11</version>
+		</dependency>
+
+
 
 		<!-- LOGS log4j2 y SLF4J -->
 		<dependency>
@@ -53,6 +60,7 @@
 			<version>2.11.1</version>
 		</dependency>
 		<!-- LOGS log4j2 y SLF4J -->
+
 
 		<!-- jUnit para las pruebas de unidad -->
 		<dependency>
@@ -74,9 +82,8 @@
 			<version>1.5.2</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- jUnit para las pruebas de unidad -->
 
-		<!-- Mockito para las pruebas de unidad -->
+		<!-- jUnit para las pruebas de unidad -->
 
 		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
 		<dependency>
@@ -94,9 +101,14 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Mockito para las pruebas de unidad -->
-	</dependencies>
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.8</version>
+		</dependency>
 
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>

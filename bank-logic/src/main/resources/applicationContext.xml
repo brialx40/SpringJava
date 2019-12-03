@@ -22,6 +22,7 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	<context:component-scan base-package="co" scoped-proxy="interfaces" />
 	
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 	
 
 </beans>

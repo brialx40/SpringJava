@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,80 +23,78 @@ import co.edu.usbcali.bank.domain.Cliente;
 import co.edu.usbcali.bank.domain.TipoDocumento;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration("/applicationcontext.xml")
+@ContextConfiguration("/applicationContext.xml")
 class ClienteSpringTest {
 	
 	@PersistenceContext
 	EntityManager entityManager;
 	
-	final static Logger log = LoggerFactory.getLogger(ClienteSpringTest.class);
+	private final static Logger log=LoggerFactory.getLogger(ClienteSpringTest.class);
 	
-	final static Long clieId = 9790L;
-	
+	final static Long ClieID=9790L;
+
 	@Test
 	@DisplayName("save")
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+	@Transactional(readOnly= false, propagation = Propagation.REQUIRED)
 	@Rollback(false)
-	void aTest() {
-		Cliente cliente = entityManager.find(Cliente.class, clieId);
-		assertNull(cliente,"El cliente no existe");
+	void atest() {
+		Cliente cliente= entityManager.find(Cliente.class, ClieID);
+		assertNull(cliente, "Ya existe un cliente con id:"+ClieID);
 		
 		cliente = new Cliente();
-		cliente.setClieId(clieId);
 		cliente.setActivo("S");
-		cliente.setDireccion("Avenida siempre viva 123");
-		cliente.setEmail("hjsimpson@gmail.com");
+		cliente.setClieId(ClieID);
+		cliente.setDireccion("Avenida falsa 123");
+		cliente.setEmail("algo@algo.com");
 		cliente.setNombre("Homero J Simpson");
-		cliente.setTelefono("555 555 555");
+		cliente.setTelefono("000");
 		
-		TipoDocumento tipoDocumento = entityManager.find(TipoDocumento.class, 1L);
-			assertNotNull(tipoDocumento);
-			cliente.setTipoDocumento(tipoDocumento);
+		TipoDocumento tipoDocumento=entityManager.find(TipoDocumento.class, 1L);
+		assertNotNull(tipoDocumento, "El tipo de documento es nulo.");
+		cliente.setTipoDocumento(tipoDocumento);
 		
 		entityManager.persist(cliente);
-		
-		log.info("Se registró el cliente "+cliente.getNombre());
+
 	}
 	
 	@Test
 	@DisplayName("findById")
 	@Transactional(readOnly = true)
-	void bTest() {		
-		Cliente cliente = entityManager.find(Cliente.class, clieId);		
-		assertNotNull(cliente, "No existe cliente "+clieId);
+	void btest() {		
+		Cliente cliente=entityManager.find(Cliente.class, ClieID);
+		assertNotNull(cliente);
+		log.info("id="+cliente.getClieId());
+		log.info("Nombre="+cliente.getNombre());
 		
-		log.info("Id: "+cliente.getClieId());
-		log.info("Nombre: "+cliente.getNombre());
-		
-		TipoDocumento tipoDocumento = cliente.getTipoDocumento();
+		TipoDocumento tipoDocumento =cliente.getTipoDocumento();
 		assertNotNull(tipoDocumento);
-		log.info(tipoDocumento.getNombre());
+		log.info(tipoDocumento.getNombre());		
 	}
 	
 	@Test
 	@DisplayName("update")
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+	@Transactional(readOnly= false, propagation = Propagation.REQUIRED)
 	@Rollback(false)
 	void cTest() {
-		Cliente cliente = entityManager.find(Cliente.class, clieId);
-		assertNotNull(cliente,"El cliente existe");
+		Cliente cliente= entityManager.find(Cliente.class, ClieID);
+		assertNotNull(cliente, "No existe un cliente con id:"+ClieID);
 		
-		cliente.setActivo("N");
-				
+		cliente.setActivo("N");		
+		
 		entityManager.merge(cliente);
-		log.info("Se actualizó el cliente "+cliente.getClieId());
+
 	}
 	
 	@Test
 	@DisplayName("delete")
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+	@Transactional(readOnly= false, propagation = Propagation.REQUIRED)
 	@Rollback(false)
 	void dTest() {
-		Cliente cliente = entityManager.find(Cliente.class, clieId);
-		assertNotNull(cliente,"El cliente no existe");
+		Cliente cliente= entityManager.find(Cliente.class, ClieID);
+		assertNotNull(cliente, "No existe un cliente con id:"+ClieID);
 		
 		entityManager.remove(cliente);
-		log.info("Se eliminó el cliente "+cliente.getClieId());
+
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -103,14 +102,20 @@ class ClienteSpringTest {
 	@DisplayName("findAll")
 	@Transactional(readOnly = true)
 	void eTest() {
-		String jpql = "FROM Cliente";
-		List<Cliente> listaCliente = entityManager.createQuery(jpql).getResultList();
+		String jpql="FROM Cliente";
+		List<Cliente> listaCliente= entityManager.createQuery(jpql).getResultList();
 		
+		//tradicional
+		for (Cliente cliente : listaCliente) {
+			log.info("Nombre: "+cliente.getNombre());
+		}
+		
+		//funcional
 		listaCliente.forEach(cliente->{
-			log.info("Nombre "+cliente.getNombre());
-			log.info("Email "+cliente.getEmail());
-		});
-		
+			
+				log.info("Nombre: "+cliente.getNombre());
+				log.info("Email: "+cliente.getEmail());
+			});
 	}
 
 }
